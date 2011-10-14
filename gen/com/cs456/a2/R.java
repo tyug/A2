@@ -11,19 +11,48 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
+        public static final int blue_gradient=0x7f020000;
+        public static final int icon=0x7f020001;
     }
     public static final class id {
-        public static final int output=0x7f050000;
-        public static final int output2=0x7f050001;
-        public static final int output3=0x7f050003;
-        public static final int start=0x7f050002;
+        public static final int delete_btn=0x7f06000e;
+        public static final int generateBtn=0x7f060002;
+        public static final int intervalChangeBtn=0x7f060006;
+        public static final int intervalText=0x7f060001;
+        public static final int lastScanText=0x7f060000;
+        public static final int mostRecentText=0x7f060004;
+        public static final int scanBtn=0x7f06000d;
+        public static final int textView1=0x7f060009;
+        public static final int textView2=0x7f060008;
+        public static final int textView3=0x7f06000c;
+        public static final int textView4=0x7f06000a;
+        public static final int textView5=0x7f06000b;
+        public static final int uidText=0x7f060003;
+        public static final int uploadBtn=0x7f060007;
+        public static final int wifiConnectText=0x7f060005;
     }
     public static final class layout {
         public static final int main=0x7f030000;
     }
     public static final class string {
-        public static final int app_name=0x7f040001;
-        public static final int hello=0x7f040000;
+        public static final int app_name=0x7f050001;
+        public static final int btn_ok=0x7f050004;
+        public static final int btn_okay=0x7f050005;
+        public static final int btn_scan=0x7f050002;
+        public static final int btn_start=0x7f050003;
+        public static final int btn_upload=0x7f050006;
+        public static final int delete_btn=0x7f05000d;
+        public static final int generate_bun=0x7f050007;
+        public static final int hello=0x7f050000;
+        public static final int last_scan_lbl=0x7f050008;
+        public static final int most_recent_lbl=0x7f05000c;
+        public static final int scan_interval_lbl=0x7f05000b;
+        public static final int uid_lbl=0x7f05000a;
+        public static final int wifi_conn_lbl=0x7f050009;
+    }
+    public static final class style {
+        public static final int LargeButtonText=0x7f040000;
+        public static final int NavButtonText=0x7f040002;
+        public static final int SmallButtonText=0x7f040001;
     }
 }
