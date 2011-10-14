@@ -43,7 +43,9 @@ public class BLSQuery {
 			md.update(macAddress.getBytes());
 			btmachash=Base64.encodeToString(md.digest(),0);
 			HttpClient httpclient = new DefaultHttpClient();
-			HttpResponse response = httpclient.execute(new HttpGet("http://blow.cs.uwaterloo.ca/cgi-bin/bls_query.pl?btmachash="+btmachash.toString().replace("\n", "")));
+			String URI = "http://blow.cs.uwaterloo.ca/cgi-bin/bls_query.pl?btmachash="+btmachash.toString();
+			URI=URI.replace("\n", "");
+			HttpResponse response = httpclient.execute(new HttpGet(URI));
             content = response.getEntity().getContent();	        
 	        
             //reading the input

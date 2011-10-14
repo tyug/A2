@@ -1,5 +1,7 @@
 package com.cs456.a2;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -52,16 +54,18 @@ public class DeviceCommActivity extends Activity {
     	tv.setText("");
     	TextView tv2 = (TextView) findViewById(R.id.output);
     	tv2.setText("Starting Scan");
-    	search.startScan();    	
-    	for (String txt: search.getBtMACList()) {
+    	search.startScan();
+    	
+    	ArrayList<String> mList = search.getBtMACList();
+    	for (String txt: mList) {
     		tv.append(txt);
     	}
     	tv2.setText("Finished Scan");
     	
     	TextView tv3 = (TextView) findViewById(R.id.output3);
     	tv3.setText("Starting query");
-    	for (int i =0; i < search.getBtMACList().size();i++); {
-    		String[] content = BLSQuery.query("00:23:7A:11:D4:53");
+    	for (int i = 0; i < mList.size();i++) {
+    		String[] content = BLSQuery.query(mList.get(i));
     		tv.append("-------\n");
     		for (int j = 0; j<content.length; j++) {
     			if (content[j]!=null)
@@ -70,7 +74,6 @@ public class DeviceCommActivity extends Activity {
     	}
     	
     	tv3.setText("done query");
-    	
     }
  
 }

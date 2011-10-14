@@ -37,7 +37,6 @@ public class Search {
 	}
 	
 	public void startScan() {
-		btMACList.clear();
 		if (btAdapter.isDiscovering())
 			btAdapter.cancelDiscovery();
 		setIsRunning(true);
@@ -70,9 +69,9 @@ public class Search {
 
             // When discovery finds a device
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Get the BluetoothDevice object from the Intent
+                // Get the BluetoothDevic	e object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                btMACList.add(device.getName()+" "+device.getAddress());
+                btMACList.add(device.getAddress());
                 
             // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
