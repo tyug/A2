@@ -37,6 +37,7 @@ public class Search {
 	}
 	
 	public void startScan() {
+		//btMACList.clear();
 		if (btAdapter.isDiscovering())
 			btAdapter.cancelDiscovery();
 		setIsRunning(true);
