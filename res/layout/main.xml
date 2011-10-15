@@ -18,5 +18,7 @@
     <Button android:text="Connect" android:id="@+id/connect" android:layout_width="wrap_content" android:layout_height="wrap_content" android:onClick="startConnect"></Button>
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/startServer" android:text="Connect"></TextView>
     <Button android:text="Connect" android:layout_width="wrap_content" android:layout_height="wrap_content" android:onClick="startServer" android:id="@+id/server"></Button>
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/myTest">
+    </EditText>
     
 </LinearLayout>

@@ -1,7 +1,11 @@
 package com.cs456.a2;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -122,34 +126,50 @@ public class DeviceCommActivity extends Activity {
     	TextView tv = (TextView) findViewById(R.id.startServer);
     	serverRelated=tv;
     	tv.setText("starting");
-    	TextView tv2 = (TextView) findViewById(R.id.server);
-    	Object pass = new MyServer().execute(tv,tv2);
+    	if(!serverListenerRunning) {
+    		Object pass = new MyServer().execute();
+    	}
     }
  
     private Handler handler = new Handler();
     TextView serverRelated;
+    TextView clientRelated;
+    private boolean serverListenerRunning = false;
+    private boolean clientListenerRunning = false;
+    private final int SOCKET_PORT = 62009;
+    
+    private final String EXIT_MESSAGE = "Goodbye Cruel World";
+    private final String START_MESSAGE = "Hello Cruel World";
+    private final String SEND_FILE_LIST_MESSAGE = "File List Cruel World";
+    private final String END_FILE_LIST_MESSAGE = "No More File List Cruel World";
+    
     //Singleton
     private class MyServer extends AsyncTask {
 
 		@Override
 		protected Object doInBackground(Object... arg0) {
-			ServerSocket server;
+			ServerSocket server = null;
+			Socket client = null;
+			BufferedReader in = null;
+			BufferedWriter out = null;
 			try {
+				serverListenerRunning = true;
 				server = new ServerSocket();
 			
 				server.setReuseAddress(true);
-				//server.setTimeout(0);
-				String ip = getLocalIpAddress();
-				TextView tv = (TextView) arg0[0];
-				tv.setText("Listening: "+ip);
 				
-				server.bind(new InetSocketAddress(62009));
+				handler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						serverRelated.setText("Listening: "+getLocalIpAddress());
+					}
+				});
+				
+				server.bind(new InetSocketAddress(SOCKET_PORT));
 	
-				Socket client = null;
-				
-				//this command blocks
 				client = server.accept();
-				//tv.setText("ACCEPTED WIN");
+				
 				handler.post(new Runnable() {
 					
 					@Override
@@ -157,49 +177,179 @@ public class DeviceCommActivity extends Activity {
 						serverRelated.setText("Server is done");
 					}
 				});
-				/*BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+				
+				
+				in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+				out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+				
+				PrintWriter pw = new PrintWriter(out);
+				
 				String line = null;
-				while ((line=in.readLine())!=null) {
+
+				while (true) {
+					handler.post(new Runnable() {
+
+						@Override
+						public void run() {
+							serverRelated.setText("Pre Read Line");
+						}
+					});
+					line = in.readLine();
+					handler.post(new Runnable() {
+						
+						@Override
+						public void run() {
+							serverRelated.setText("Read Line");
+						}
+					});
 					
+					if(line == null) {
+						break;
+					}
+					
+					if(START_MESSAGE.equals(line)) {
+						pw.println(START_MESSAGE);
+						pw.flush();
+						break;
+					}
 				}
-					*/
-				client.close();
+				
+				if(line != null) {
+					while (true) {
+						line = in.readLine();
+
+						if (SEND_FILE_LIST_MESSAGE.equals(line)) {
+							pw.println("Here is your file list\nAnd more\nAnd MORE!");
+							pw.println(END_FILE_LIST_MESSAGE);
+							pw.flush();
+						} else if (EXIT_MESSAGE.equals(line)) {
+							pw.println(EXIT_MESSAGE);
+							pw.flush();
+							break;
+						}
+					}
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
+			}
+			finally {
+				serverListenerRunning = false;
+				try {
+					if(in != null) in.close();
+					if(out != null) out.close();
+					if(client != null) client.close();
+					if(server != null) server.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}				
 			}
 			return null;
 		}
     	
     }
     
-    public void startConnect(View view) {
-    	Socket socket = null;    	
+    private class MyClient extends AsyncTask {
+
+		@Override
+		protected Object doInBackground(Object... arg0) {
+			BufferedReader in = null;
+			BufferedWriter out = null;
+			Socket socket = null;
+			try {
+				clientListenerRunning = true;
+				
+				socket = new Socket("192.168.2.10", SOCKET_PORT);
+				
+				handler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						clientRelated.setText("Socket connected");
+					}
+				});
+				
+				
+				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+				
+				PrintWriter pw = new PrintWriter(out);
+				
+				String line = null;
+				
+				while (true) {
+					pw.println(START_MESSAGE);
+					pw.flush();
+					
+					line = in.readLine();
+					
+					if(line == null) {
+						break;
+					}
+					
+					if(START_MESSAGE.equals(line)) {
+						break;
+					}
+				}
+				String fileList = "XXX";
+				
+				if(line != null) {
+					pw.println(SEND_FILE_LIST_MESSAGE);
+					pw.flush();
+					
+					while (true) {
+						
+						line = in.readLine();
+						
+						if(END_FILE_LIST_MESSAGE.equals(line)) {
+							pw.println(EXIT_MESSAGE);
+							pw.flush();
+							break;
+						}
+						else if(line == null) break;
+						else {
+							fileList += line + "\n";
+						}
+					}
+					
+					line = in.readLine();
+				}
+				
+				final String test = fileList;
+				
+				handler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						clientRelated.setText(test);
+					}
+				});
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			finally {
+				clientListenerRunning = false;
+				try {
+					if(in != null) in.close();
+					if(out != null) out.close();
+					if(socket != null) socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}				
+			}
+			return null;
+		}
     	
-		try {
-			//if (wlanList.size()>0) {
-				//Not sure how this is gonna work
-				//socket = new Socket(wlanList.get(0), 62009);
-				socket = new Socket("192.168.2.8",62009);
-			  	OutputStream out = socket.getOutputStream();       
-		    	PrintWriter output = new PrintWriter(out);         
-		    	
-		    	TextView tv = (TextView) findViewById(R.id.connection);
-		    	tv.setText("Starting sending of data");
-		    	output.println("Hello from Android");
-		    	out.flush();
-		    	out.close();
-		    	tv.setText("Data sent to PC");            
-		    	
-		    	socket.close();                                    
-		    	tv.setText("Soecket closed");
-			//}
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}   
+    }
+    
+    
+  
+    public void startConnect(View view) {
+    	TextView tv2 = (TextView) findViewById(R.id.myTest);
+    	clientRelated=tv2;
+    	if(!clientListenerRunning) {
+    		Object pass = new MyClient().execute();
+    	}
     }
  
 }
