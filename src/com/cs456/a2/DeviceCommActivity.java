@@ -1,8 +1,6 @@
 package com.cs456.a2;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -21,6 +19,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
@@ -121,11 +120,14 @@ public class DeviceCommActivity extends Activity {
     
     public void startServer(View view) {
     	TextView tv = (TextView) findViewById(R.id.startServer);
+    	serverRelated=tv;
     	tv.setText("starting");
     	TextView tv2 = (TextView) findViewById(R.id.server);
-    	new MyServer().execute(tv,tv2);
+    	Object pass = new MyServer().execute(tv,tv2);
     }
  
+    private Handler handler = new Handler();
+    TextView serverRelated;
     //Singleton
     private class MyServer extends AsyncTask {
 
@@ -147,14 +149,21 @@ public class DeviceCommActivity extends Activity {
 				
 				//this command blocks
 				client = server.accept();
-				tv.setText("ACCEPTED WIN");
-				
+				//tv.setText("ACCEPTED WIN");
+				handler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						serverRelated.setText("Server is done");
+					}
+				});
 				/*BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 				String line = null;
 				while ((line=in.readLine())!=null) {
 					
 				}
-					*/	
+					*/
+				client.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -167,9 +176,10 @@ public class DeviceCommActivity extends Activity {
     	Socket socket = null;    	
     	
 		try {
-			if (wlanList.size()>0) {
+			//if (wlanList.size()>0) {
 				//Not sure how this is gonna work
-				socket = new Socket(wlanList.get(0), 62009);
+				//socket = new Socket(wlanList.get(0), 62009);
+				socket = new Socket("192.168.2.8",62009);
 			  	OutputStream out = socket.getOutputStream();       
 		    	PrintWriter output = new PrintWriter(out);         
 		    	
@@ -179,10 +189,10 @@ public class DeviceCommActivity extends Activity {
 		    	out.flush();
 		    	out.close();
 		    	tv.setText("Data sent to PC");            
-		
+		    	
 		    	socket.close();                                    
-		    	tv.setText("Socket closed");
-			}
+		    	tv.setText("Soecket closed");
+			//}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
