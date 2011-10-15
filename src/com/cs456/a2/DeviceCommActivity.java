@@ -1,5 +1,6 @@
 package com.cs456.a2;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -7,6 +8,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.TextView;
 
@@ -34,6 +36,15 @@ public class DeviceCommActivity extends Activity {
         
         TextView output = (TextView) findViewById(R.id.output);
         output.setText("Nothing here yet");
+        
+        
+        //////////////////////////
+        ////// This is TEMP //////
+        //////////////////////////
+        TextView janson = (TextView)findViewById(R.id.jansonTest);
+        File sdCardRoot = Environment.getExternalStorageDirectory(); // Get the directory path to the SD card
+        janson.setText(FileListing.getSortedFileListString(sdCardRoot));
+        
     }
     
     @Override
@@ -48,6 +59,10 @@ public class DeviceCommActivity extends Activity {
         // Unregister broadcast listeners
         this.unregisterReceiver(search.getmReceiver());
     }
+    
+   
+
+ 
     
     public void startSearch(View view) {
     	TextView tv = (TextView) findViewById(R.id.output2);
