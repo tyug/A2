@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A class containing a static method to return a stringified list of files located withing a provided directoy
+ * @author Janson
+ *
+ */
 public class FileListing {
 	
 	/**

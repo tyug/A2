@@ -1,15 +1,20 @@
 package com.cs456.a2;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 
 
@@ -45,6 +50,15 @@ public class DeviceCommActivity extends Activity {
         File sdCardRoot = Environment.getExternalStorageDirectory(); // Get the directory path to the SD card
         janson.setText(FileListing.getSortedFileListString(sdCardRoot));
         
+        Button jansonbtn = (Button)findViewById(R.id.jansonbtn);
+        jansonbtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Logger.getInstance().log("Pressed the Button");				
+			}
+		});
+        
     }
     
     @Override
@@ -58,10 +72,27 @@ public class DeviceCommActivity extends Activity {
 
         // Unregister broadcast listeners
         this.unregisterReceiver(search.getmReceiver());
+        
+		Logger.getInstance().closeLogFile();
     }
     
    
-
+    // Creates a dialog box stating there was an error, and prints the text which the calling code provides it
+    private void handleError(String error) {
+		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+		alertBuilder.setMessage(error);
+		alertBuilder.setCancelable(false);
+		
+		alertBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		});
+		
+		AlertDialog alert = alertBuilder.create();
+		alert.setTitle("Error!");
+		alert.show();
+	}
  
     
     public void startSearch(View view) {
