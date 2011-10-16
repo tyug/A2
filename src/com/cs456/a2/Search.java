@@ -20,13 +20,23 @@ public class Search {
 	private BluetoothAdapter btAdapter;
 	private ArrayList<String> btMACList;
 	
+	private static Search singleton = null;
+	
+	public static Search getInstance() {
+		if(singleton == null) {
+			singleton = new Search();
+		}
+		
+		return singleton;
+	}
+
 	public ArrayList<String> getBtMACList() {
 		return btMACList;
 	}
 
 	private Boolean isRunning;
 	
-	public Search() {
+	private Search() {
 		btAdapter=getBtAdapter();
 		btMACList= new ArrayList<String>();
 		setIsRunning(false);

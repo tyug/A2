@@ -74,8 +74,7 @@ public class DeviceCommActivity extends Activity {
 			}
 		});
                 
-        search = new Search();
-        search.startScan();
+        Search.getInstance().startScan();
         
      // Register for broadcasts when a device is discovered
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
