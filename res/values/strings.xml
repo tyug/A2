@@ -6,7 +6,7 @@
     <string name="myMac">My MAC:</string>
     <string name="myIP">My IP:</string>
     <string name="BTScanResults">BlueTooth Scan Results</string>
-    <string name="lastBTScan">Last BT Scan:</string>
+    <string name="lastBTScan">Last BT\nScan:</string>
     <string name="scanBT">Scan BT</string>
     <string name="fileList">Get File List</string>
     <string name="startStopXfer">Start Transfer</string>
