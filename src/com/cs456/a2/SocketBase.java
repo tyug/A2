@@ -8,22 +8,31 @@ import java.util.Enumeration;
 import android.os.AsyncTask;
 import android.os.Handler;
 
+/**
+ * An abstract base class containing common methods and data for both the server and client sockets
+ * @author Janson
+ *
+ */
 public abstract class SocketBase extends AsyncTask {
-	protected final int SOCKET_PORT = 62009;
-	protected final String EXIT_MESSAGE = "Goodbye Cruel World";
-	protected final String START_MESSAGE = "Hello Cruel World";
-	protected final String SEND_FILE_LIST_MESSAGE = "File List Cruel World";
-	protected final String END_FILE_LIST_MESSAGE = "No More File List Cruel World";
+	protected final int SOCKET_PORT = 62009; // The port we are connecting on
+	protected final String EXIT_MESSAGE = "Goodbye Cruel World"; // The exit message for the protocol
+	protected final String START_MESSAGE = "Hello Cruel World"; // The initialization message for the protocol
+	protected final String SEND_FILE_LIST_MESSAGE = "File List Cruel World"; // The request for the file list message for the protocol
+	protected final String END_FILE_LIST_MESSAGE = "No More File List Cruel World"; // A message indicating the transfer of the file list is complete
 	
-	protected Handler handler = new Handler();
+	protected Handler handler = new Handler(); // A common handler used to post handle new runnables
 	
-	protected boolean isRunning = false;
+	protected boolean isConnected = false; // Indicates if the socket is connected
 	
 	@Override
-	protected abstract Object doInBackground(Object... params);
+	protected abstract Object doInBackground(Object... params); // Must be implemented in derived classes
 	
-	public boolean isRunning() {
-		return this.isRunning;
+	/**
+	 * Returns whether the socket is connected
+	 * @return True if the socket is connected
+	 */
+	public boolean isConnected() {
+		return this.isConnected;
 	}
 	
 	

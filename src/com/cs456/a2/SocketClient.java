@@ -10,6 +10,11 @@ import java.net.Socket;
 
 import android.widget.TextView;
 
+/**
+ * A socket used to connect to a server socket on another device
+ * @author Janson
+ *
+ */
 public class SocketClient extends SocketBase {
 	
 	private TextView clientView;
@@ -23,9 +28,11 @@ public class SocketClient extends SocketBase {
 		BufferedReader in = null;
 		BufferedWriter out = null;
 		Socket socket = null;
+		PrintWriter pw = null;
 		try {
-			isRunning = true;
+			isConnected = true; // We are connected
 			
+			// Create a new socket
 			socket = new Socket("192.168.2.8", SOCKET_PORT);
 			
 			handler.post(new Runnable() {
@@ -36,14 +43,16 @@ public class SocketClient extends SocketBase {
 				}
 			});
 			
-			
+			// Create the input and output stream readers
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			
-			PrintWriter pw = new PrintWriter(out);
+			// Create a PrintWriter to use for the output stream
+			pw = new PrintWriter(out);
 			
 			String line = null;
 			
+			// Send the start connection message, and wait for the start message response
 			while (true) {
 				pw.println(START_MESSAGE);
 				pw.flush();
@@ -58,27 +67,35 @@ public class SocketClient extends SocketBase {
 					break;
 				}
 			}
+			
 			String fileList = "XXX";
 			
+			// Ensure we didn't get here because the socket was closed
 			if(line != null) {
+				//Send a request for the file list message
 				pw.println(SEND_FILE_LIST_MESSAGE);
 				pw.flush();
 				
+				// Continue to read in the file list until the end of file list message is received
 				while (true) {
 					
 					line = in.readLine();
 					
+					// When we get the end of file list message, send the connection exit message
 					if(END_FILE_LIST_MESSAGE.equals(line)) {
 						pw.println(EXIT_MESSAGE);
 						pw.flush();
 						break;
 					}
+					// The socket closed, break out of this
 					else if(line == null) break;
+					// Append the new line of the file list data to a string
 					else {
 						fileList += line + "\n";
 					}
 				}
 				
+				// Wait for the exit successful message to be received.  We don't really care what this is as long as we get something
 				line = in.readLine();
 			}
 			
@@ -95,11 +112,15 @@ public class SocketClient extends SocketBase {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		// This is always run
 		finally {
-			isRunning = false;
+			// We are no longer connected
+			isConnected = false;
 			try {
+				// Close everything that was opened
 				if(in != null) in.close();
 				if(out != null) out.close();
+				if(pw != null) pw.close();
 				if(socket != null) socket.close();
 			} catch (IOException e) {
 				e.printStackTrace();

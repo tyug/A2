@@ -122,14 +122,14 @@ public class DeviceCommActivity extends Activity {
     }
     
     public void startServer() {
-    	if(!serverSocket.isRunning()) {
+    	if(!serverSocket.isConnected()) {
     		serverRelated.setText("starting");
     		serverSocket.execute();
     	}
     }
     
     public void startClient() {
-    	if(!clientSocket.isRunning()) {
+    	if(!clientSocket.isConnected()) {
     		clientSocket.execute();
     	}
     }
