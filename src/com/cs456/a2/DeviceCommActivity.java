@@ -16,7 +16,7 @@ import android.widget.EditText;
 public class DeviceCommActivity extends Activity {
 	
 	// Member fields
-    private Search search;
+    private Search search = Search.getInstance();
     private ArrayList<String> wlanList;
     
     
@@ -74,7 +74,7 @@ public class DeviceCommActivity extends Activity {
 			}
 		});
                 
-        Search.getInstance().startScan();
+        search.startScan();
         
      // Register for broadcasts when a device is discovered
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -83,6 +83,8 @@ public class DeviceCommActivity extends Activity {
      // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         this.registerReceiver(search.getmReceiver(), filter);
+        
+        myMACText.setText(BluetoothAdapter.getDefaultAdapter().getAddress());
         
         clientSocket = new SocketClient(statusText);
         serverSocket = new SocketServer(statusText);
