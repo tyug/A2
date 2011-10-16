@@ -9,9 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 
 /***
- * This class is assumed to be a singleton, too lazy to double check for now.
- * 
- * WARNING ONLY INITIALIZE ONE SEARCH CLASS
+ * Scan and searches for BT devices
  * 
  * @author Kuen
  *
@@ -47,7 +45,7 @@ public class Search {
 	}
 	
 	public void startScan() {
-		//btMACList.clear();
+		btMACList.clear();
 		if (btAdapter.isDiscovering())
 			btAdapter.cancelDiscovery();
 		setIsRunning(true);

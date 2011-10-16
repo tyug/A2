@@ -34,7 +34,7 @@ public class SocketClient extends SocketBase {
 			isConnected = true; // We are connected
 			
 			// Create a new socket
-			socket = new Socket("192.168.2.8", SOCKET_PORT);
+			socket = new Socket((String)arg0[0], SOCKET_PORT);
 			
 			handler.post(new Runnable() {
 				

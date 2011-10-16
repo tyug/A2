@@ -93,7 +93,7 @@ public class Logger {
 	// Converts a timestamp in milliseconds to a nicely formatted displayable date
     private String getHumanReadableDate(long milli) {
     	Date date = new Date(milli);
-    	DateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+    	DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	return sdf.format(date);
     }
 
