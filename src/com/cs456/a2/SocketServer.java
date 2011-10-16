@@ -12,6 +12,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import android.os.Environment;
+import android.widget.EditText;
 import android.widget.TextView;
 
 /**
@@ -23,10 +24,10 @@ public class SocketServer extends SocketBase {
 
 	private File sdCardRoot = Environment.getExternalStorageDirectory(); // The SD card root path
 	
-	private TextView serverView;
+	private EditText statusText;
 	
-	public SocketServer(TextView serverView) {
-		this.serverView = serverView;
+	public SocketServer(EditText serverView) {
+		this.statusText = serverView;
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class SocketServer extends SocketBase {
 
 				@Override
 				public void run() {
-					serverView.setText("Listening: " + getLocalIpAddress());
+					statusText.setText("Listening: " + getLocalIpAddress());
 				}
 			});
 
@@ -64,7 +65,7 @@ public class SocketServer extends SocketBase {
 
 				@Override
 				public void run() {
-					serverView.setText("Server is done");
+					statusText.setText("Server is done");
 				}
 			});
 
@@ -83,7 +84,7 @@ public class SocketServer extends SocketBase {
 
 					@Override
 					public void run() {
-						serverView.setText("Pre Read Line");
+						statusText.setText("Pre Read Line");
 					}
 				});
 				line = in.readLine();
@@ -91,7 +92,7 @@ public class SocketServer extends SocketBase {
 
 					@Override
 					public void run() {
-						serverView.setText("Read Line");
+						statusText.setText("Read Line");
 					}
 				});
 				

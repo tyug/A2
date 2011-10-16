@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
 
 
 public class DeviceCommActivity extends Activity {
@@ -23,23 +23,59 @@ public class DeviceCommActivity extends Activity {
     private SocketServer serverSocket = null;
     private SocketClient clientSocket = null;
     
-    TextView serverRelated;
-    TextView clientRelated;
+    private EditText statusText;
+    private EditText myMACText;
+    private EditText myIPText;
+    private EditText lastBTScanText;
+    private EditText btScanResultsText;
+    
+    private Button scanBTBtn;
+    private Button fileListBtn;
+    private Button startStopTranferButton;
     
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        search = new Search();
-        search.startScan();
+        
         wlanList = new ArrayList<String>();
         
-        serverRelated = (TextView) findViewById(R.id.startServer);
-        clientRelated = (TextView) findViewById(R.id.myTest);
+        statusText = (EditText) findViewById(R.id.statusText);
+        myMACText = (EditText) findViewById(R.id.myMacText);
+        myIPText = (EditText) findViewById(R.id.myIpText);
+        lastBTScanText = (EditText) findViewById(R.id.lastBtScanText);
+        btScanResultsText = (EditText) findViewById(R.id.btScanResultsText);
         
-        clientSocket = new SocketClient(clientRelated);
-        serverSocket = new SocketServer(serverRelated);
+        scanBTBtn = (Button) findViewById(R.id.scanBtBtn);
+        scanBTBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				startSearch();
+			}
+		});
+        
+        fileListBtn = (Button) findViewById(R.id.fileListBtn);
+        fileListBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				startClient();
+			}
+		});
+        
+        startStopTranferButton = (Button) findViewById(R.id.startStopTrandferBtn);
+        startStopTranferButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				startServer();
+			}
+		});
+                
+        search = new Search();
+        search.startScan();
         
      // Register for broadcasts when a device is discovered
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -49,26 +85,8 @@ public class DeviceCommActivity extends Activity {
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         this.registerReceiver(search.getmReceiver(), filter);
         
-        TextView output = (TextView) findViewById(R.id.output);
-        output.setText("Nothing here yet");   
-        
-        Button connectButton = (Button) findViewById(R.id.connect);
-        connectButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				startClient();
-			}
-		});
-        
-        Button listenButton = (Button) findViewById(R.id.server);
-        listenButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				startServer();
-			}
-		});
+        clientSocket = new SocketClient(statusText);
+        serverSocket = new SocketServer(statusText);
     }
     
     @Override
@@ -86,24 +104,23 @@ public class DeviceCommActivity extends Activity {
 		Logger.getInstance().closeLogFile();
     }
     
-    public void startSearch(View view) {
-    	TextView tv = (TextView) findViewById(R.id.output2);
-    	tv.setText("");
-    	TextView tv2 = (TextView) findViewById(R.id.output);
-    	tv2.setText("Starting Scan");
+    public void startSearch() {
+    	statusText.setText("Starting Scan");
+    	btScanResultsText.setText("");
+    	
     	search.startScan();
     	
     	ArrayList<String> mList = search.getBtMACList();
     	for (String txt: mList) {
-    		tv.append(txt);
+    		btScanResultsText.append(txt);
     	}
-    	tv2.setText("Finished Scan");
+    	statusText.setText("Finished Scan");
     	
-    	TextView tv3 = (TextView) findViewById(R.id.output3);
-    	tv3.setText("Starting query");
+    	statusText.setText("Starting BLS lookup");
     	for (int i = 0; i < mList.size();i++) {
+    		
     		String[] content = BLSQuery.query(mList.get(i));
-    		tv.append("\n-------\n");
+    		btScanResultsText.append("\n-------\n");
     		if (content == null) {
     			//ERROR::
     			return;
@@ -111,19 +128,18 @@ public class DeviceCommActivity extends Activity {
     		
     		for (int j = 0; j<content.length; j++) {
     			if (content[j]!=null) {
-    				tv.append(content[j]);
+    				btScanResultsText.append(content[j]);
     				if (j==1)
     					wlanList.add(content[j]);
     			}
     		}
     	}
     	
-    	tv3.setText("done query");
+    	statusText.setText("done query");
     }
     
     public void startServer() {
     	if(!serverSocket.isConnected()) {
-    		serverRelated.setText("starting");
     		serverSocket.execute();
     	}
     }

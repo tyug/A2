@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import android.widget.EditText;
 import android.widget.TextView;
 
 /**
@@ -17,10 +18,10 @@ import android.widget.TextView;
  */
 public class SocketClient extends SocketBase {
 	
-	private TextView clientView;
+	private EditText statusText;
 
-	public SocketClient(TextView clientView) {
-		this.clientView = clientView;
+	public SocketClient(EditText clientView) {
+		this.statusText = clientView;
 	}
 	
 	@Override
@@ -39,7 +40,7 @@ public class SocketClient extends SocketBase {
 				
 				@Override
 				public void run() {
-					clientView.setText("Socket connected");
+					statusText.setText("Socket connected");
 				}
 			});
 			
@@ -105,7 +106,7 @@ public class SocketClient extends SocketBase {
 				
 				@Override
 				public void run() {
-					clientView.setText(test);
+					statusText.setText(test);
 				}
 			});
 			
