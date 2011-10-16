@@ -117,11 +117,8 @@ public class DeviceCommActivity extends Activity {
         IntentFilter myFilter = new IntentFilter();
         myFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStartReceiver, myFilter);    
-        
-        clientSocket = new SocketClient(statusText);
-        serverSocket = new SocketServer(statusText);
-        
         MACIPMap = new HashMap<String,String>();
+
     }
     
     @Override
@@ -143,8 +140,6 @@ public class DeviceCommActivity extends Activity {
 	 * This is called when the network state changes.  
 	 * Depending on whether the WiFi is connected will determine what is displayed in the text field
 	 */    
-	
-	
 	private void updateIPAddress() {
 		NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 		
@@ -239,8 +234,19 @@ public class DeviceCommActivity extends Activity {
     }
     
     public void startServer() {
-    	if(!serverSocket.isConnected()) {
+    	if(serverSocket == null) {
+    		startStopTranferButton.setText("Stop Transfer");
+    		statusText.setText("Started the file transfer listener");
+    		
+    		serverSocket = new SocketServer(statusText);
     		serverSocket.execute();
+    	}
+    	else {
+    		startStopTranferButton.setText("Start Transfer");
+    		statusText.setText("Stopped the file transfer listener");
+    		
+    		serverSocket.killThread();
+    		serverSocket = null;
     	}
     }
     
@@ -253,7 +259,7 @@ public class DeviceCommActivity extends Activity {
     	
     	ArrayList<String> val = new ArrayList<String>();
     	bundle.putStringArrayList("keys", keys);
-    	
+
     	//To guarentee that the mapped versions in the other intent matches each other
     	for (int i =0; i < keys.size();i++) {
     		val.add(MACIPMap.get(keys.get(i)));
@@ -265,5 +271,5 @@ public class DeviceCommActivity extends Activity {
     	
         startActivity(i);
     }
- 
+	 
 }

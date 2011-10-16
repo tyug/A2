@@ -35,8 +35,11 @@ public class FileListActivity extends ListActivity {
 		super.onListItemClick(l, v, position, id);
 		// Get the item that was clicked
 		Object o = this.getListAdapter().getItem(position);
-		if(!clientSocket.isConnected()) {
-    			clientSocket.execute(MACIPMap.get(o.toString()));
+		
+		if(clientSocket == null || clientSocket.hasQuit()) {
+    		clientSocket = new SocketClient(null);
+    		clientSocket.execute(MACIPMap.get(o.toString()));
     	}
+    			
 	}
 }

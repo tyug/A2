@@ -22,19 +22,10 @@ public abstract class SocketBase extends AsyncTask {
 	
 	protected Handler handler = new Handler(); // A common handler used to post handle new runnables
 	
-	protected boolean isConnected = false; // Indicates if the socket is connected
+	protected boolean shouldQuit = false;
 	
 	@Override
 	protected abstract Object doInBackground(Object... params); // Must be implemented in derived classes
-	
-	/**
-	 * Returns whether the socket is connected
-	 * @return True if the socket is connected
-	 */
-	public boolean isConnected() {
-		return this.isConnected;
-	}
-	
 	
 	/***
      * Testing code
@@ -54,5 +45,15 @@ public abstract class SocketBase extends AsyncTask {
             //Log.e(LOG_TAG, ex.toString());
         }
         return null;
+    }
+    
+    public void killThread() {
+    	this.shouldQuit = true;
+    }
+    
+    protected abstract void handleKillThread();
+    
+    protected boolean hasQuit() {
+    	return this.shouldQuit;
     }
 }
