@@ -1,11 +1,17 @@
 package com.cs456.a2;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.IntentFilter;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -85,6 +91,7 @@ public class DeviceCommActivity extends Activity {
         this.registerReceiver(search.getmReceiver(), filter);
         
         myMACText.setText(BluetoothAdapter.getDefaultAdapter().getAddress());
+        myIPText.setText(getLocalIpAddress());
         
         clientSocket = new SocketClient(statusText);
         serverSocket = new SocketServer(statusText);
@@ -103,6 +110,26 @@ public class DeviceCommActivity extends Activity {
         this.unregisterReceiver(search.getmReceiver());
         
 		Logger.getInstance().closeLogFile();
+    }
+    
+    /***
+     * Get your ip address
+     */
+    protected String getLocalIpAddress() {
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()) {
+                        return inetAddress.getHostAddress().toString();
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            //Log.e(LOG_TAG, ex.toString());
+        }
+        return null;
     }
     
     public void startSearch() {
