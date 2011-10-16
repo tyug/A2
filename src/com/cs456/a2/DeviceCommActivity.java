@@ -35,7 +35,6 @@ public class DeviceCommActivity extends Activity {
     private Map<String,String> MACIPMap;
     
     private SocketServer serverSocket = null;
-    private SocketClient clientSocket = null;
     
     private EditText statusText;
     private EditText myMACText;
@@ -178,6 +177,8 @@ public class DeviceCommActivity extends Activity {
     	btScanResultsText.setText("");
     	
     	scanBTBtn.setEnabled(false);
+    	fileListBtn.setEnabled(false);
+    	
     	Date date = new Date(System.currentTimeMillis());
     	SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	lastBTScanText.setText(dt.format(date));
@@ -225,6 +226,7 @@ public class DeviceCommActivity extends Activity {
 					public void run() {
 						btScanResultsText.setText(MACList);
 						scanBTBtn.setEnabled(true);
+						fileListBtn.setEnabled(true);
 						statusText.setText("Finished Scan");
 					}
 				});
