@@ -19,6 +19,7 @@ public class BLSQuery {
 
 	private String macAddress;
 	
+	//convert the macAddress received to one that's expected by the BLS
 	public BLSQuery(String macAddress) {
 		String mccAddress=macAddress.replaceAll(":", "");
 		setMacAddress(mccAddress.toLowerCase());

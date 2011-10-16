@@ -18,6 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+         <activity android:name=".FileListActivity" android:label="FileList" android:screenOrientation="portrait">
+      </activity>
 
     </application>
 </manifest>

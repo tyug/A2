@@ -1,14 +1,15 @@
 package com.cs456.a2;
 
-import java.text.SimpleDateFormat;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -19,8 +20,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -33,7 +32,7 @@ public class DeviceCommActivity extends Activity {
 	
 	// Member fields
     private Search search = Search.getInstance();
-    private ArrayList<String> wlanList;
+    private Map<String,String> MACIPMap;
     
     private SocketServer serverSocket = null;
     private SocketClient clientSocket = null;
@@ -66,8 +65,6 @@ public class DeviceCommActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
-        wlanList = new ArrayList<String>();
         
         statusText = (EditText) findViewById(R.id.statusText);
         myMACText = (EditText) findViewById(R.id.myMacText);
@@ -123,6 +120,8 @@ public class DeviceCommActivity extends Activity {
         
         clientSocket = new SocketClient(statusText);
         serverSocket = new SocketServer(statusText);
+        
+        MACIPMap = new HashMap<String,String>();
     }
     
     @Override
@@ -211,21 +210,20 @@ public class DeviceCommActivity extends Activity {
 		    	//Logger stuff here
 		    	for (int i = 0; i < mList.size();i++) {
 		    		String[] content = BLSQuery.query(mList.get(i));
-		    		//btScanResultsText.append("\n-------\n");
 		    		if (content == null) {
 		    			//ERROR::
-		    			return;
+		    			continue;
 		    		}
 		    		
 		    		for (int j = 0; j<content.length; j++) {
 		    			if (content[j]!=null) {
-		    				//btScanResultsText.append(content[j]);
-		    				if (j==1)
-		    					wlanList.add(content[j]);
+		    				if (j==1 && !content[j].isEmpty()) {
+		    					MACIPMap.put(mList.get(i),content[j]);
+		    				}
 		    			}
 		    		}
 		    	}
-		    	
+
 		    	final String MACList = var.toString();
 		    	handle.post(new Runnable() {
 					@Override
@@ -247,9 +245,25 @@ public class DeviceCommActivity extends Activity {
     }
     
     public void startClient() {
-    	if(!clientSocket.isConnected()) {
-    		clientSocket.execute();
+    	Bundle bundle = new Bundle();
+    	
+    	//putting all the keys into the new arrayList to be passed over to other activity
+    	ArrayList<String> keys = new ArrayList<String>();
+    	keys.addAll((Collection<String>) MACIPMap.keySet());
+    	
+    	ArrayList<String> val = new ArrayList<String>();
+    	bundle.putStringArrayList("keys", keys);
+    	
+    	//To guarentee that the mapped versions in the other intent matches each other
+    	for (int i =0; i < keys.size();i++) {
+    		val.add(MACIPMap.get(keys.get(i)));
     	}
+    	bundle.putStringArrayList("values", val);
+    	//Send the information to the other screen
+    	Intent i = new Intent(this, FileListActivity.class);
+    	i.putExtras(bundle);
+    	
+        startActivity(i);
     }
  
 }
