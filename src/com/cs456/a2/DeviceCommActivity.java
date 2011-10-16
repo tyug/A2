@@ -19,8 +19,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -120,9 +118,6 @@ public class DeviceCommActivity extends Activity {
         IntentFilter myFilter = new IntentFilter();
         myFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStartReceiver, myFilter);    
-        
-        clientSocket = new SocketClient(statusText);
-        serverSocket = new SocketServer(statusText);
     }
     
     @Override
@@ -144,8 +139,6 @@ public class DeviceCommActivity extends Activity {
 	 * This is called when the network state changes.  
 	 * Depending on whether the WiFi is connected will determine what is displayed in the text field
 	 */    
-	
-	
 	private void updateIPAddress() {
 		NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 		
@@ -241,13 +234,25 @@ public class DeviceCommActivity extends Activity {
     }
     
     public void startServer() {
-    	if(!serverSocket.isConnected()) {
+    	if(serverSocket == null) {
+    		startStopTranferButton.setText("Stop Transfer");
+    		statusText.setText("Started the file transfer listener");
+    		
+    		serverSocket = new SocketServer(statusText);
     		serverSocket.execute();
+    	}
+    	else {
+    		startStopTranferButton.setText("Start Transfer");
+    		statusText.setText("Stopped the file transfer listener");
+    		
+    		serverSocket.killThread();
+    		serverSocket = null;
     	}
     }
     
     public void startClient() {
-    	if(!clientSocket.isConnected()) {
+    	if(clientSocket == null || clientSocket.hasQuit()) {
+    		clientSocket = new SocketClient(statusText);
     		clientSocket.execute();
     	}
     }
