@@ -15,9 +15,9 @@
     <Button android:onClick="startSearch" android:id="@+id/start" android:text="Search" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
     <TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/hello" android:id="@+id/output3"/>
     <TextView android:text="Connect" android:id="@+id/connection" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-    <Button android:text="Connect" android:id="@+id/connect" android:layout_width="wrap_content" android:layout_height="wrap_content" android:onClick="startConnect"></Button>
+    <Button android:text="Connect" android:id="@+id/connect" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/startServer" android:text="Connect"></TextView>
-    <Button android:text="Connect" android:layout_width="wrap_content" android:layout_height="wrap_content" android:onClick="startServer" android:id="@+id/server"></Button>
+    <Button android:text="Connect" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/server"></Button>
     <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/myTest">
     </EditText>
     
