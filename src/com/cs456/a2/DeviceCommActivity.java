@@ -39,6 +39,7 @@ public class DeviceCommActivity extends Activity {
 	// Member fields
     private Search search;
     private ArrayList<String> wlanList;
+    private File sdCardRoot = Environment.getExternalStorageDirectory();
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,7 +65,7 @@ public class DeviceCommActivity extends Activity {
         ////// This is TEMP //////
         //////////////////////////
 //        TextView janson = (TextView)findViewById(R.id.jansonTest);
-        File sdCardRoot = Environment.getExternalStorageDirectory(); // Get the directory path to the SD card
+         // Get the directory path to the SD card
 //        janson.setText(FileListing.getSortedFileListString(sdCardRoot));
         
 //        Button jansonbtn = (Button)findViewById(R.id.jansonbtn);
@@ -264,7 +265,7 @@ public class DeviceCommActivity extends Activity {
 						line = in.readLine();
 
 						if (SEND_FILE_LIST_MESSAGE.equals(line)) {
-							pw.println("Here is your file list\nAnd more\nAnd MORE!");
+							pw.println(FileListing.getSortedFileListString(sdCardRoot));
 							pw.println(END_FILE_LIST_MESSAGE);
 							pw.flush();
 						} else if (EXIT_MESSAGE.equals(line)) {
@@ -303,7 +304,7 @@ public class DeviceCommActivity extends Activity {
 			try {
 				clientListenerRunning = true;
 				
-				socket = new Socket("192.168.2.10", SOCKET_PORT);
+				socket = new Socket("192.168.2.8", SOCKET_PORT);
 				
 				handler.post(new Runnable() {
 					
