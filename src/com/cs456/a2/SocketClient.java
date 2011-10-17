@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import android.content.Context;
-import android.widget.EditText;
 
 /**
  * A socket used to connect to a server socket on another device
@@ -17,12 +16,13 @@ import android.widget.EditText;
  *
  */
 public class SocketClient extends SocketBase {
-	
-	private EditText statusText;
 	private Socket socket = null;
 
-	public SocketClient(EditText clientView, Context context) {
-		this.statusText = clientView;
+	/**
+	 * Creates a new client socket in its own thread
+	 * @param context The context to display error messages
+	 */
+	public SocketClient(Context context) {
 		this.context = context;
 	}
 	
@@ -36,15 +36,6 @@ public class SocketClient extends SocketBase {
 			// Create a new socket
 			socket = new Socket((String)arg0[0], SOCKET_PORT);
 			
-			if (statusText != null) {
-				handler.post(new Runnable() {
-					
-					@Override
-					public void run() {
-						statusText.setText("Socket connected");
-					}
-				});
-			}
 			// Create the input and output stream readers
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -62,45 +53,43 @@ public class SocketClient extends SocketBase {
 				line = in.readLine();
 				
 				if(line == null) {
-					break;
+					throw new IOException("The server device has diconnected.  Please reconnect and request data again");
 				}
 				
 				if(START_MESSAGE.equals(line)) {
 					break;
 				}
 			}
+
+			//Send a request for the file list message
+			pw.println(SEND_FILE_LIST_MESSAGE);
+			pw.flush();
 			
-			// Ensure we didn't get here because the socket was closed
-			if(line != null) {
-				//Send a request for the file list message
-				pw.println(SEND_FILE_LIST_MESSAGE);
-				pw.flush();
+			// Continue to read in the file list until the end of file list message is received
+			while (true) {
 				
-				// Continue to read in the file list until the end of file list message is received
-				while (true) {
-					
-					line = in.readLine();
-					
-					// When we get the end of file list message, send the connection exit message
-					if(END_FILE_LIST_MESSAGE.equals(line)) {
-						pw.println(EXIT_MESSAGE);
-						pw.flush();
-						break;
-					}
-					// The socket closed, break out of this
-					else if(line == null) break;
-					// Append the new line of the file list data to a string
-					else {
-						fileList += line + "\n";
-					}
-				}
-				
-				// Wait for the exit successful message to be received.  We don't really care what this is as long as we get something
 				line = in.readLine();
+				
+				// When we get the end of file list message, send the connection exit message
+				if(END_FILE_LIST_MESSAGE.equals(line)) {
+					pw.println(EXIT_MESSAGE);
+					pw.flush();
+					break;
+				}
+				// The socket closed, break out of this
+				else if(line == null)
+					throw new IOException("The server device has diconnected.  Please reconnect and request data again");
+				// Append the new line of the file list data to a string
+				else {
+					fileList += line + "\n";
+				}
 			}
 			
+			// Wait for the exit successful message to be received.  We don't really care what this is as long as we get something
+			line = in.readLine();
+			
 		} catch (IOException e) {
-			e.printStackTrace();
+			handleError(e.getMessage());
 		}
 		// This is always run
 		finally {
@@ -119,6 +108,10 @@ public class SocketClient extends SocketBase {
 		return fileList;
 	}
 	
+	/**
+	 * If this thread is supposed to close, we close the socket so
+	 * the thread will know to exit.
+	 */
 	protected void handleKillThread() {
 		try {
 			if (socket != null) socket.close();

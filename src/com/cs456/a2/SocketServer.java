@@ -27,6 +27,10 @@ public class SocketServer extends SocketBase {
 	private ServerSocket server = null;
 	private Socket client = null;
 	
+	/**
+	 * Creates a new server socket in its own thread
+	 * @param context The context to display error messages
+	 */
 	public SocketServer(Context context) {
 		this.context = context;
 	}
@@ -130,12 +134,16 @@ public class SocketServer extends SocketBase {
 		return null;
 	}
 	
+	/**
+	 * If this thread is supposed to close, we close the server and client sockets so
+	 * the thread will know to exit.
+	 */
 	protected void handleKillThread() {
 		try {
 			if (server != null)	server.close();
 			if (client != null) client.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			handleError(e.getMessage());
 		}
 	}
 

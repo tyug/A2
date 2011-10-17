@@ -104,7 +104,7 @@ public class FileListActivity extends ListActivity {
 		
 		//Getting the client socket
 		if(clientSocket == null || clientSocket.hasQuit()) {
-    		clientSocket = new SocketClient(null, this);
+    		clientSocket = new SocketClient(this);
     		clientSocket.execute(MACIPMap.get(o.toString()));
     	}
     	
