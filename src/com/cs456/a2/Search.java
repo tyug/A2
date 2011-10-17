@@ -15,9 +15,12 @@ import android.content.Intent;
  *
  */
 public class Search {
+	//Members
 	private BluetoothAdapter btAdapter;
 	private ArrayList<String> btMACList;
+	private Boolean isRunning;
 	
+	//singleton related
 	private static Search singleton = null;
 	
 	public static Search getInstance() {
@@ -28,22 +31,23 @@ public class Search {
 		return singleton;
 	}
 
+	//get the list
 	public ArrayList<String> getBtMACList() {
 		return btMACList;
 	}
 
-	private Boolean isRunning;
-	
 	private Search() {
 		btAdapter=getBtAdapter();
 		btMACList= new ArrayList<String>();
 		setIsRunning(false);
 	}
-	
+
+	//get the adapter
 	public BluetoothAdapter getBtAdapter() {
 		return BluetoothAdapter.getDefaultAdapter();
 	}
 	
+	//Starts the scan
 	public void startScan() {
 		btMACList.clear();
 		if (btAdapter.isDiscovering())
@@ -52,6 +56,7 @@ public class Search {
 		btAdapter.startDiscovery();
 	}
 	
+	//Stops the scan
 	public void stopScan() {
 		setIsRunning(false);
 		btAdapter.cancelDiscovery();

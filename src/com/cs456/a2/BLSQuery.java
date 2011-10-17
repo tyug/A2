@@ -25,6 +25,7 @@ public class BLSQuery {
 		setMacAddress(mccAddress.toLowerCase());
 	}
 
+	//Get the macAddress back if needed
 	public String getMacAddress() {
 		return macAddress;
 	}
@@ -33,9 +34,11 @@ public class BLSQuery {
 		this.macAddress = macAddress;
 	}
 	
+	//Query the server
 	public String[] query() {
 		String[] returnInfo = null;
 		try {
+			//change the mac address to a hash to get it from the server
 			String btmachash;
 			MessageDigest md = null;
 			InputStream content = null;
@@ -45,9 +48,11 @@ public class BLSQuery {
 			btmachash=Base64.encodeToString(md.digest(),0);
 			HttpClient httpclient = new DefaultHttpClient();
 			String URI = "http://blow.cs.uwaterloo.ca/cgi-bin/bls_query.pl?btmachash="+btmachash.toString();
+			//remove the new line character so it works
 			URI=URI.replace("\n", "");
 			HttpResponse response = httpclient.execute(new HttpGet(URI));
-            content = response.getEntity().getContent();	        
+            //Get content back
+			content = response.getEntity().getContent();	        
 	        
             //reading the input
 	        BufferedReader rd = new BufferedReader(new InputStreamReader(content));
@@ -72,6 +77,12 @@ public class BLSQuery {
         return returnInfo;
 	}
 
+	/***
+	 * Static version of this class. Give a macaddress it'll return the query received
+	 * 
+	 * @param MACAddress
+	 * @return
+	 */
 	public static String[] query(String MACAddress) {
 		BLSQuery tmp = new BLSQuery(MACAddress);
 		return tmp.query();

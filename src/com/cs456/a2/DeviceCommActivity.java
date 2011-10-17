@@ -32,7 +32,6 @@ public class DeviceCommActivity extends Activity {
 	
 	// Member fields
     private Search search = Search.getInstance();
-    private Map<String,String> MACIPMap;
     
     private SocketServer serverSocket = null;
     
@@ -51,6 +50,7 @@ public class DeviceCommActivity extends Activity {
     private ConnectivityManager connManager;
     private ArrayList<String> mList = null;
     
+    //Get the listener for activity, and if it changes, then change the connectivity
     private BroadcastReceiver networkStartReceiver = new BroadcastReceiver() {  
         @Override  
         public void onReceive(Context context, Intent intent) {  
@@ -66,6 +66,7 @@ public class DeviceCommActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        //Setting up all the buttons we will be using
         statusText = (EditText) findViewById(R.id.statusText);
         myMACText = (EditText) findViewById(R.id.myMacText);
         myIPText = (EditText) findViewById(R.id.myIpText);
@@ -74,7 +75,6 @@ public class DeviceCommActivity extends Activity {
         
         scanBTBtn = (Button) findViewById(R.id.scanBtBtn);
         scanBTBtn.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				startSearch();
@@ -84,7 +84,6 @@ public class DeviceCommActivity extends Activity {
         fileListBtn = (Button) findViewById(R.id.fileListBtn);
         fileListBtn.setEnabled(false);
         fileListBtn.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				startClient();
@@ -93,7 +92,6 @@ public class DeviceCommActivity extends Activity {
         
         startStopTranferButton = (Button) findViewById(R.id.startStopTrandferBtn);
         startStopTranferButton.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				startServer();
@@ -117,9 +115,7 @@ public class DeviceCommActivity extends Activity {
      // Create the listener for network state changes
         IntentFilter myFilter = new IntentFilter();
         myFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkStartReceiver, myFilter);    
-        MACIPMap = new HashMap<String,String>();
-
+        registerReceiver(networkStartReceiver, myFilter);
     }
     
     @Override
@@ -169,26 +165,34 @@ public class DeviceCommActivity extends Activity {
                 }
             }
         } catch (SocketException ex) {
-            //Log.e(LOG_TAG, ex.toString());
+            ex.printStackTrace();
         }
         return null;
     }
     
+    /***
+     * starts searching for other bluetooth devices
+     */
     public void startSearch() {
     	statusText.setText("Starting Scan");
     	btScanResultsText.setText("");
     	
+    	//Don't allow them to click on scan or file list since nothing is populated
     	scanBTBtn.setEnabled(false);
     	fileListBtn.setEnabled(false);
     	
+    	//Set the last scan time
     	Date date = new Date(System.currentTimeMillis());
     	SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	lastBTScanText.setText(dt.format(date));
     	search.startScan();
     	
+    	//Wait for changes to occur to not freeze UI thread
     	Thread thr = new Thread(new Runnable() {
 			@Override
 			public void run() {
+				//Wait until the bluetooth is done scanning.
+				//Sleep the thread since it's pointless for this thread to continuously run for that long
 				Boolean searchTemp=true;
 				while(searchTemp) {
 					try {
@@ -199,14 +203,17 @@ public class DeviceCommActivity extends Activity {
 						e.printStackTrace();
 					}
 				}
+				
+				//get the list, and add it to the string buffer
 				StringBuffer var = new StringBuffer();
 				mList = search.getBtMACList();
 		    	for (String txt: mList) {
 		    		var.append(txt+"\n");
 		    	}	    	
 		    	
-		    	//final ArrayList<String> memo = mList;
 		    	final String MACList = var.toString();
+		    	
+		    	//Update the UI with the new MAC addresses and show appropriate messages
 		    	handle.post(new Runnable() {
 					@Override
 					public void run() {
@@ -225,6 +232,9 @@ public class DeviceCommActivity extends Activity {
     	thr.start();
     }
     
+    /***
+     * Allows this android machine to listen to the port or close the port
+     */
     public void startServer() {
     	if(serverSocket == null) {
     		startStopTranferButton.setText("Stop Transfer");
@@ -242,6 +252,10 @@ public class DeviceCommActivity extends Activity {
     	}
     }
     
+    /***
+     * Starts up the file transfer list.
+     * Goes to FileListActivity intent passing in the list for keys
+     */
     public void startClient() {
     	Bundle bundle = new Bundle();
 

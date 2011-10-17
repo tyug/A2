@@ -15,7 +15,15 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+/***
+ * Activity for going to a new page and letting them see mac addresses
+ * and let them click into one if they want the file list from 1 of the places
+ * @author Kuen
+ *
+ */
 public class FileListActivity extends ListActivity {
+	
+	//member variables
 	private SocketClient clientSocket = null;
 	private Map<String,String> MACIPMap = null;
 	private ArrayAdapter<String> listing = null;
@@ -28,25 +36,32 @@ public class FileListActivity extends ListActivity {
 	public void onCreate(Bundle b) {
 		super.onCreate(b);
 		setContentView(R.layout.filelist);
+		
+		//get the value passed from deviceComm
 		b = this.getIntent().getExtras(); 
-		// Create an ArrayAdapter, that will actually make the Strings
-		// appear in the ListView
+		
+		// appear in the ListView as the keys
 		final ArrayList<String> key = b.getStringArrayList("keys");
 		MACIPMap = new HashMap<String,String>();
 		
+		//set a helpful text
 		statusText = (EditText)findViewById(R.id.fileListStatus);
 		statusText.setText("Searching for valid MACs");
+		
+		//Querying the server seeing if MACs are valid
 		new Thread(new Runnable() {
-			
+			Boolean error = false;
 			@Override
 			public void run() {
+				//Get all the MAC addresses
 		    	for (int i = 0; i < key.size();i++) {
 		    		String[] content = BLSQuery.query(key.get(i));
 		    		if (content == null) {
-		    			//ERROR::
+		    			error=true;
 		    			continue;
 		    		}
 		    		
+		    		//If you find it, 
 		    		for (int j = 0; j<content.length; j++) {
 		    			if (content[j]!=null) {
 		    				if (j==1 && !content[j].isEmpty()) {
@@ -56,15 +71,24 @@ public class FileListActivity extends ListActivity {
 		    		}
 		    	}
 		    	
+		    	//update the UI thread
 		    	handle.post(new Runnable() {
 					@Override
 					public void run() {
 						ArrayList<String> tmp = new ArrayList<String>();
 						tmp.addAll(MACIPMap.keySet());
-						This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,tmp));
-						if (tmp.isEmpty()) {
+						
+						//If there are no valid MAC addresses tell them
+						if (error) {
+							statusText.setText("Query Failed... Are you on WIFI?");
+						} else if (tmp.isEmpty()) {
 							statusText.setText("No valid MAC address\nGo back and search for new BlueTooth devices!");
+						} else {
+							statusText.setText("Click on 1 of the MAC addresses");
+							//Update the UI thread
+							This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,tmp));
 						}
+						
 					}
 				});
 			}
@@ -78,6 +102,7 @@ public class FileListActivity extends ListActivity {
 		// Get the item that was clicked
 		Object o = this.getListAdapter().getItem(position);
 		
+		//Getting the client socket
 		if(clientSocket == null || clientSocket.hasQuit()) {
     		clientSocket = new SocketClient(null, this);
     		clientSocket.execute(MACIPMap.get(o.toString()));
@@ -85,22 +110,34 @@ public class FileListActivity extends ListActivity {
     	
 		statusText.setText("Getting File List");				
 		
+		//This clears the list
 		this.setListAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,new ArrayList<String>()));
 		
+		//Getting the file list in a different thread, to not hang UI thread
     	new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
 				String filelist;
 				try {
+					//This waits until the async task is done
 					filelist = (String) clientSocket.get();
+					
+					//splitting the returned string
 					final List<String> files = Arrays.asList(filelist.split("\\n"));
+					
 					handle.post(new Runnable() {
-						
 						@Override
 						public void run() {
-							This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,files));
-							statusText.setText("Fetch Complete!");
+							//Update the UI with appropriate information
+							if (files.isEmpty())
+							{
+								statusText.setText("There are no Files");
+								This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,files));
+							} else {
+								This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,files));
+								statusText.setText("Fetch Complete!");
+							}
 						}
 					});
 				} catch (InterruptedException e) {
