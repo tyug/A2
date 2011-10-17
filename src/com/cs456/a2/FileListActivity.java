@@ -34,10 +34,8 @@ public class FileListActivity extends ListActivity {
 		final ArrayList<String> key = b.getStringArrayList("keys");
 		MACIPMap = new HashMap<String,String>();
 		
-		//listing = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, key);
-		//this.setListAdapter(listing);
 		statusText = (EditText)findViewById(R.id.fileListStatus);
-		statusText.setText("Searching for appropriate MACs");
+		statusText.setText("Searching for valid MACs");
 		new Thread(new Runnable() {
 			
 			@Override
@@ -59,12 +57,14 @@ public class FileListActivity extends ListActivity {
 		    	}
 		    	
 		    	handle.post(new Runnable() {
-					
 					@Override
 					public void run() {
 						ArrayList<String> tmp = new ArrayList<String>();
 						tmp.addAll(MACIPMap.keySet());
 						This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,tmp));
+						if (tmp.isEmpty()) {
+							statusText.setText("No valid MAC address\nGo back and search for new BlueTooth devices!");
+						}
 					}
 				});
 			}
@@ -82,21 +82,15 @@ public class FileListActivity extends ListActivity {
     		clientSocket = new SocketClient(null, this);
     		clientSocket.execute(MACIPMap.get(o.toString()));
     	}
-    	//handle.post(new Runnable() {
-			
-		//	@Override
-		//	public void run() {
-				statusText.setText("Getting File List");				
-		//	}
-		//});
     	
+		statusText.setText("Getting File List");				
+		
 		this.setListAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,new ArrayList<String>()));
 		
     	new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				String filelist;
 				try {
 					filelist = (String) clientSocket.get();
@@ -106,6 +100,7 @@ public class FileListActivity extends ListActivity {
 						@Override
 						public void run() {
 							This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,files));
+							statusText.setText("Fetch Complete!");
 						}
 					});
 				} catch (InterruptedException e) {
