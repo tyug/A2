@@ -89,13 +89,17 @@ public class SocketClient extends SocketBase {
 			line = in.readLine();
 			
 		} catch (IOException e) {
+			if(!userQuit) {
+				errorQuit = true;
+			}
+			
 			Logger.getInstance().log(" CONNECT: "+arg0[0].toString()+", FAILURE");
 			handleError(e.getMessage());
 		}
 		// This is always run
 		finally {
 			try {
-				shouldQuit = true;
+				hasQuit = true;
 				
 				// Close everything that was opened
 				if(in != null) in.close();
@@ -106,9 +110,7 @@ public class SocketClient extends SocketBase {
 				e.printStackTrace();
 			}				
 		}
-		String loggerUse = fileList.replaceAll("\n",", ");
-		loggerUse = loggerUse.substring(0,loggerUse.length()-3);
-		Logger.getInstance().log(" FILE LIST: "+arg0[0]+","+loggerUse);
+
 		return fileList;
 	}
 	
