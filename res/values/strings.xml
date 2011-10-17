@@ -9,5 +9,5 @@
     <string name="lastBTScan">Last BT\nScan:</string>
     <string name="scanBT">Scan BT</string>
     <string name="fileList">Get File List</string>
-    <string name="startStopXfer">Start Transfer</string>
+    <string name="startStopXfer">Enable FT</string>
 </resources>

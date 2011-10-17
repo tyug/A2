@@ -86,6 +86,7 @@ public class FileListActivity extends ListActivity {
 							statusText.setText("No valid MAC address\nGo back and search for new BlueTooth devices!");
 						} else {
 							statusText.setText("Click on the MAC address you want to retrive a file list from");
+							
 							//Update the UI thread
 							This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,tmp));
 						}

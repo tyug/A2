@@ -110,7 +110,7 @@ public class SocketClient extends SocketBase {
 				e.printStackTrace();
 			}				
 		}
-
+		
 		return fileList;
 	}
 	
