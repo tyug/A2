@@ -64,10 +64,10 @@ public class BLSQuery {
 	        	returnInfo[i]=line;
 	        	i++;
 	        }
-	        if (returnInfo[4].isEmpty()) {
+	        if (returnInfo[4] == null || returnInfo[4].isEmpty()) {
 	        	Logger.getInstance().log(" BLS_REPLY: FAILURE");
 	        } else {
-	        	Logger.getInstance().log(" BLS_REPLY: "+returnInfo[4]+","+returnInfo[1]+","+returnInfo[2]);
+	        	Logger.getInstance().log(" BLS_REPLY: "+returnInfo[4]+", "+returnInfo[1]+", "+returnInfo[2]);
 	        }
 		} catch (NoSuchAlgorithmException e1) {
 			Logger.getInstance().log(" BLS_REPLY: NO RESPONSE");
