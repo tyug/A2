@@ -35,7 +35,7 @@ public class SocketClient extends SocketBase {
 		try {			
 			// Create a new socket
 			socket = new Socket((String)arg0[0], SOCKET_PORT);
-			
+			Logger.getInstance().log(" CONNECT: "+arg0[0].toString()+", SUCCESS");
 			// Create the input and output stream readers
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -89,6 +89,7 @@ public class SocketClient extends SocketBase {
 			line = in.readLine();
 			
 		} catch (IOException e) {
+			Logger.getInstance().log(" CONNECT: "+arg0[0].toString()+", FAILURE");
 			handleError(e.getMessage());
 		}
 		// This is always run
@@ -105,6 +106,8 @@ public class SocketClient extends SocketBase {
 				e.printStackTrace();
 			}				
 		}
+		
+		Logger.getInstance().log(" FILE LIST: "+arg0[0]+","+fileList.replaceAll("\n", ", "));
 		return fileList;
 	}
 	

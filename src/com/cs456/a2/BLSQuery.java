@@ -21,6 +21,7 @@ public class BLSQuery {
 	
 	//convert the macAddress received to one that's expected by the BLS
 	public BLSQuery(String macAddress) {
+		Logger.getInstance().log(" BLS_QUERY: "+macAddress);
 		String mccAddress=macAddress.replaceAll(":", "");
 		setMacAddress(mccAddress.toLowerCase());
 	}
@@ -63,14 +64,21 @@ public class BLSQuery {
 	        	returnInfo[i]=line;
 	        	i++;
 	        }
-	        
+	        if (returnInfo[4].isEmpty()) {
+	        	Logger.getInstance().log(" BLS_REPLY: FAILURE");
+	        } else {
+	        	Logger.getInstance().log(" BLS_REPLY: "+returnInfo[4]+","+returnInfo[1]+","+returnInfo[2]);
+	        }
 		} catch (NoSuchAlgorithmException e1) {
+			Logger.getInstance().log(" BLS_REPLY: NO RESPONSE");
 			e1.printStackTrace();
 			//some random error here
 		} catch (ClientProtocolException e) {
             //error= "Upload Failed, Client protocol fail";
+			Logger.getInstance().log(" BLS_REPLY: NO RESPONSE");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			Logger.getInstance().log(" BLS_REPLY: NO RESPONSE");
 			e.printStackTrace();
 		} 
 		
