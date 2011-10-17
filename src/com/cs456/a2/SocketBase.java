@@ -29,6 +29,7 @@ public abstract class SocketBase extends AsyncTask {
     
     public void killThread() {
     	this.shouldQuit = true;
+    	handleKillThread();
     }
     
     // Creates a dialog box stating there was an error, and prints the text which the calling code provides it

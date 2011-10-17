@@ -56,6 +56,7 @@ public class Logger {
 		try {
 			String curTime = getHumanReadableDate(System.currentTimeMillis());
 			bufferedWriter.write("<" + curTime + ">: " + text + "\n");
+			bufferedWriter.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
