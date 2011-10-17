@@ -49,7 +49,7 @@ public class Search {
 	
 	//Starts the scan
 	public void startScan() {
-		Logger.getInstance().log(" SCAN_START");
+		Logger.getInstance().log(" SCAN_BEGIN");
 		btMACList.clear();
 		if (btAdapter.isDiscovering())
 			btAdapter.cancelDiscovery();

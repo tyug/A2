@@ -1,0 +1,15 @@
+2011-10-17 04:53:59:  SCAN_BEGIN
+2011-10-17 04:53:59:  SCAN_DETECT: 38:E7:D8:46:6B:E3
+2011-10-17 04:53:59:  SCAN_DETECT: 38:E7:D8:46:6A:B2
+2011-10-17 04:54:00:  SCAN_DETECT: 38:E7:D8:46:6A:01
+2011-10-17 04:54:09:  SCAN_END
+2011-10-17 04:54:15:  BLS_QUERY: 38:E7:D8:46:6B:E3
+2011-10-17 04:54:16:  BLS_REPLY: 2011-10-17 04:54:12.795, 192.168.2.8, 69.166.21.159
+2011-10-17 04:54:16:  BLS_QUERY: 38:E7:D8:46:6A:B2
+2011-10-17 04:54:16:  BLS_REPLY: 2011-10-17 04:47:05.399, 192.168.2.9, 69.166.22.146
+2011-10-17 04:54:16:  BLS_QUERY: 38:E7:D8:46:6A:01
+2011-10-17 04:54:16:  BLS_REPLY: 2011-10-17 04:55:16.591, 192.168.2.10, 69.166.22.146
+2011-10-17 04:54:27:  CONNECT: 192.168.2.8, FAILURE
+2011-10-17 04:54:42:  CONNECT: 192.168.2.9, FAILURE
+2011-10-17 04:54:55:  CONNECT: 192.168.2.9, SUCCESS
+2011-10-17 04:54:55:  FILE LIST: 192.168.2.9, /mnt/sdcard/Android/data/com.cooliris.media/cache/local-album-cacheindex, /mnt/sdcard/Android/data/com.cooliris.media/cache/local-image-thumbsindex, /mnt/sdcard/Android/data/com.cooliris.media/cache/local-meta-cacheindex, /mnt/sdcard/Android/data/com.cooliris.media/cache/local-video-thumbsindex, /mnt/sdcard/Android/data/com.cooliris.media/cache/picasa-thumbsindex, /mnt/sdcard/Android/data/com.google.android.apps.maps/cache/cache_its.m, /mnt/sdcard/Android/data/com.google.android.apps.maps/cache/cache_its_ter.m, /mnt/sdcard/Android/data/com.google.android.apps.maps/cache/cache_r.m, /mnt/sdcard/Android/data/com.google.android.apps.maps/cache/cache_vts_GMM.m, /mnt/sdcard/Android/data/com.google.android.apps.maps/cache/cache_vts_labl_GMM.m, /mnt/sdcard/Android/data/com.google.android.apps.maps/cache/cache_vts_tran_GMM.m, /mnt/sdcard/download/BLS-1.apk, /mnt/sdcard/download/BLS.apk, /mnt/sdcard/log.txt
