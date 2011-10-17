@@ -81,6 +81,7 @@ public class DeviceCommActivity extends Activity {
 		});
         
         fileListBtn = (Button) findViewById(R.id.fileListBtn);
+        fileListBtn.setEnabled(false);
         fileListBtn.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -198,7 +199,7 @@ public class DeviceCommActivity extends Activity {
 					}
 				}
 				StringBuffer var = new StringBuffer();
-				ArrayList<String> mList = search.getBtMACList();
+				final ArrayList<String> mList = search.getBtMACList();
 		    	for (String txt: mList) {
 		    		var.append(txt+"\n");
 		    	}	    	
@@ -226,7 +227,11 @@ public class DeviceCommActivity extends Activity {
 					public void run() {
 						btScanResultsText.setText(MACList);
 						scanBTBtn.setEnabled(true);
-						fileListBtn.setEnabled(true);
+						
+						if(mList != null && !mList.isEmpty()) {
+							fileListBtn.setEnabled(true);
+						}
+						
 						statusText.setText("Finished Scan");
 					}
 				});
