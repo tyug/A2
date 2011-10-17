@@ -79,7 +79,7 @@ public class FileListActivity extends ListActivity {
 		Object o = this.getListAdapter().getItem(position);
 		
 		if(clientSocket == null || clientSocket.hasQuit()) {
-    		clientSocket = new SocketClient(null);
+    		clientSocket = new SocketClient(null, this);
     		clientSocket.execute(MACIPMap.get(o.toString()));
     	}
     	//handle.post(new Runnable() {
