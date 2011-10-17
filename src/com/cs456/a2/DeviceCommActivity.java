@@ -237,14 +237,14 @@ public class DeviceCommActivity extends Activity {
      */
     public void startServer() {
     	if(serverSocket == null) {
-    		startStopTranferButton.setText("Stop Transfer");
+    		startStopTranferButton.setText("Disable FT");
     		statusText.setText("Started the file transfer listener");
     		
     		serverSocket = new SocketServer(this);
     		serverSocket.execute(startStopTranferButton);
     	}
     	else {
-    		startStopTranferButton.setText("Start Transfer");
+    		startStopTranferButton.setText("Enable FT");
     		statusText.setText("Stopped the file transfer listener");
     		
     		serverSocket.killThread();

@@ -119,10 +119,9 @@ public class SocketServer extends SocketBase {
 			//only if it's not null it'll change text
 			if (et != null) {
 				handler.post(new Runnable() {
-					
 					@Override
 					public void run() {
-						et.setText("Start Server");
+						et.setText("Enable FT");
 					}
 				});
 			}
