@@ -35,7 +35,6 @@ public class DeviceCommActivity extends Activity {
     private Map<String,String> MACIPMap;
     
     private SocketServer serverSocket = null;
-    private SocketClient clientSocket = null;
     
     private EditText statusText;
     private EditText myMACText;
@@ -83,6 +82,7 @@ public class DeviceCommActivity extends Activity {
 		});
         
         fileListBtn = (Button) findViewById(R.id.fileListBtn);
+        fileListBtn.setEnabled(false);
         fileListBtn.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -179,6 +179,8 @@ public class DeviceCommActivity extends Activity {
     	btScanResultsText.setText("");
     	
     	scanBTBtn.setEnabled(false);
+    	fileListBtn.setEnabled(false);
+    	
     	Date date = new Date(System.currentTimeMillis());
     	SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	lastBTScanText.setText(dt.format(date));
@@ -203,13 +205,18 @@ public class DeviceCommActivity extends Activity {
 		    		var.append(txt+"\n");
 		    	}	    	
 		    	
-		    	
+		    	//final ArrayList<String> memo = mList;
 		    	final String MACList = var.toString();
 		    	handle.post(new Runnable() {
 					@Override
 					public void run() {
 						btScanResultsText.setText(MACList);
 						scanBTBtn.setEnabled(true);
+						
+						if(mList != null && !mList.isEmpty()) {
+							fileListBtn.setEnabled(true);
+						}
+						
 						statusText.setText("Finished Scan");
 					}
 				});
@@ -237,37 +244,9 @@ public class DeviceCommActivity extends Activity {
     
     public void startClient() {
     	Bundle bundle = new Bundle();
-    	
-    	//Logger stuff here
-    	for (int i = 0; i < mList.size();i++) {
-    		String[] content = BLSQuery.query(mList.get(i));
-    		if (content == null) {
-    			//ERROR::
-    			continue;
-    		}
-    		
-    		for (int j = 0; j<content.length; j++) {
-    			if (content[j]!=null) {
-    				if (j==1 && !content[j].isEmpty()) {
-    					MACIPMap.put(mList.get(i),content[j]);
-    				}
-    			}
-    		}
-    	}
 
-    	//putting all the keys into the new arrayList to be passed over to other activity
-    	ArrayList<String> keys = new ArrayList<String>();
-    	keys.addAll((Collection<String>) MACIPMap.keySet());
-    	
-    	ArrayList<String> val = new ArrayList<String>();
-    	bundle.putStringArrayList("keys", keys);
+    	bundle.putStringArrayList("keys", mList);
 
-    	//To guarentee that the mapped versions in the other intent matches each other
-    	for (int i =0; i < keys.size();i++) {
-    		val.add(MACIPMap.get(keys.get(i)));
-    	}
-    	
-    	bundle.putStringArrayList("values", val);
     	//Send the information to the other screen
     	Intent i = new Intent(this, FileListActivity.class);
     	i.putExtras(bundle);

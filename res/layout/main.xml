@@ -12,7 +12,7 @@
         <requestFocus></requestFocus>
     </EditText>
     <EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/myMacText" android:layout_alignLeft="@+id/myMacText" android:layout_alignParentRight="true" android:id="@+id/myIpText" android:editable="false"></EditText>
-    <EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignTop="@+id/textView5" android:layout_toRightOf="@+id/textView5" android:layout_alignParentRight="true" android:id="@+id/lastBtScanText" android:editable="false"></EditText>
+    <EditText android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignTop="@+id/textView5" android:layout_alignParentRight="true" android:id="@+id/lastBtScanText" android:editable="false" android:layout_alignLeft="@+id/myIpText"></EditText>
     <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentBottom="true" android:layout_alignParentLeft="true" android:id="@+id/scanBtBtn" android:text="@string/scanBT"></Button>
     <Button android:layout_width="wrap_content" android:text="@string/startStopXfer" android:id="@+id/startStopTrandferBtn" android:layout_height="wrap_content" android:layout_alignParentBottom="true" android:layout_alignParentRight="true"></Button>
     <EditText android:layout_width="wrap_content" android:editable="false" android:layout_height="wrap_content" android:id="@+id/statusText" android:layout_alignTop="@+id/textView1" android:layout_alignParentRight="true" android:layout_toRightOf="@+id/textView2"></EditText>
