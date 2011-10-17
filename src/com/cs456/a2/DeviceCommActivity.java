@@ -177,7 +177,7 @@ public class DeviceCommActivity extends Activity {
      * starts searching for other bluetooth devices
      */
     public void startSearch() {
-    	statusText.setText("Starting Scan");
+    	statusText.setText("Running Scan");
     	btScanResultsText.setText("");
     	
     	//Don't allow them to click on scan or file list since nothing is populated

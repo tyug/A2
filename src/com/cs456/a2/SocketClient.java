@@ -106,9 +106,11 @@ public class SocketClient extends SocketBase {
 				e.printStackTrace();
 			}				
 		}
-		String loggerUse = fileList.replaceAll("\n",", ");
-		loggerUse = loggerUse.substring(0,loggerUse.length()-3);
-		Logger.getInstance().log(" FILE LIST: "+arg0[0]+","+loggerUse);
+		if (fileList != null) {
+			String loggerUse = fileList.replaceAll("\n",", ");
+			loggerUse = loggerUse.substring(0,loggerUse.length()-3);
+			Logger.getInstance().log(" FILE LIST: "+arg0[0]+","+loggerUse);
+		}
 		return fileList;
 	}
 	
