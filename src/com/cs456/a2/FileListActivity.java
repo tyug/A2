@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -26,7 +28,6 @@ public class FileListActivity extends ListActivity {
 	//member variables
 	private SocketClient clientSocket = null;
 	private Map<String,String> MACIPMap = null;
-	private ArrayAdapter<String> listing = null;
 	private FileListActivity This = this;
 	
 	private EditText statusText = null;
@@ -97,7 +98,7 @@ public class FileListActivity extends ListActivity {
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	protected void onListItemClick(final ListView l, final View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		// Get the item that was clicked
 		Object o = this.getListAdapter().getItem(position);
@@ -133,21 +134,42 @@ public class FileListActivity extends ListActivity {
 							if (files.isEmpty())
 							{
 								statusText.setText("There are no Files");
-								This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,files));
-							} else {
-								This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,files));
+							} else {								
 								statusText.setText("Fetch Complete!");
-							}
+							}	
+							
+							This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,files));
 						}
 					});
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					handleError(e.getMessage());
 				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					handleError(e.getMessage());
 				}				
 			}
 		}).start();
 		}
+	
+	// Creates a dialog box stating there was an error, and prints the text which the calling code provides it
+    protected void handleError(final String error) {
+    	handle.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				AlertDialog.Builder alertBuilder = new AlertDialog.Builder(This);
+				alertBuilder.setMessage(error);
+				alertBuilder.setCancelable(false);
+				
+				alertBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+				
+				AlertDialog alert = alertBuilder.create();
+				alert.setTitle("Error!");
+				alert.show();
+			}
+		});
+	}
 }
