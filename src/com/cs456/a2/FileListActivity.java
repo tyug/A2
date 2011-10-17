@@ -95,6 +95,12 @@ public class FileListActivity extends ListActivity {
 		}).start();
 		
 	}
+	
+	@Override
+    protected void onDestroy() {
+        super.onDestroy();
+        clientSocket.killThread();
+    }
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {

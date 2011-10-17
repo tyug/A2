@@ -129,7 +129,7 @@ public class DeviceCommActivity extends Activity {
 
         // Unregister broadcast listeners
         this.unregisterReceiver(search.getmReceiver());
-        
+        serverSocket.killThread();
 		Logger.getInstance().closeLogFile();
     }
     
@@ -241,7 +241,7 @@ public class DeviceCommActivity extends Activity {
     		statusText.setText("Started the file transfer listener");
     		
     		serverSocket = new SocketServer(this);
-    		serverSocket.execute();
+    		serverSocket.execute(startStopTranferButton);
     	}
     	else {
     		startStopTranferButton.setText("Start Transfer");
