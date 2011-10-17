@@ -31,6 +31,7 @@ public class SocketClient extends SocketBase {
 		BufferedReader in = null;
 		BufferedWriter out = null;
 		PrintWriter pw = null;
+		String fileList = "";
 		try {			
 			// Create a new socket
 			socket = new Socket((String)arg0[0], SOCKET_PORT);
@@ -69,8 +70,6 @@ public class SocketClient extends SocketBase {
 				}
 			}
 			
-			String fileList = "";
-			
 			// Ensure we didn't get here because the socket was closed
 			if(line != null) {
 				//Send a request for the file list message
@@ -100,17 +99,6 @@ public class SocketClient extends SocketBase {
 				line = in.readLine();
 			}
 			
-			final String test = fileList;
-			if (statusText != null) {
-				handler.post(new Runnable() {
-					
-					@Override
-					public void run() {
-						statusText.setText(test);
-					}
-				});
-			}
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -128,7 +116,7 @@ public class SocketClient extends SocketBase {
 				e.printStackTrace();
 			}				
 		}
-		return null;
+		return fileList;
 	}
 	
 	protected void handleKillThread() {

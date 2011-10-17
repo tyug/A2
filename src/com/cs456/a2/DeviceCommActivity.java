@@ -49,6 +49,7 @@ public class DeviceCommActivity extends Activity {
     private Handler handle = new Handler();
 
     private ConnectivityManager connManager;
+    private ArrayList<String> mList = null;
     
     private BroadcastReceiver networkStartReceiver = new BroadcastReceiver() {  
         @Override  
@@ -199,28 +200,12 @@ public class DeviceCommActivity extends Activity {
 					}
 				}
 				StringBuffer var = new StringBuffer();
-				final ArrayList<String> mList = search.getBtMACList();
+				mList = search.getBtMACList();
 		    	for (String txt: mList) {
 		    		var.append(txt+"\n");
 		    	}	    	
 		    	
-		    	//Logger stuff here
-		    	for (int i = 0; i < mList.size();i++) {
-		    		String[] content = BLSQuery.query(mList.get(i));
-		    		if (content == null) {
-		    			//ERROR::
-		    			continue;
-		    		}
-		    		
-		    		for (int j = 0; j<content.length; j++) {
-		    			if (content[j]!=null) {
-		    				if (j==1 && !content[j].isEmpty()) {
-		    					MACIPMap.put(mList.get(i),content[j]);
-		    				}
-		    			}
-		    		}
-		    	}
-
+		    	//final ArrayList<String> memo = mList;
 		    	final String MACList = var.toString();
 		    	handle.post(new Runnable() {
 					@Override
@@ -259,19 +244,9 @@ public class DeviceCommActivity extends Activity {
     
     public void startClient() {
     	Bundle bundle = new Bundle();
-    	
-    	//putting all the keys into the new arrayList to be passed over to other activity
-    	ArrayList<String> keys = new ArrayList<String>();
-    	keys.addAll((Collection<String>) MACIPMap.keySet());
-    	
-    	ArrayList<String> val = new ArrayList<String>();
-    	bundle.putStringArrayList("keys", keys);
 
-    	//To guarentee that the mapped versions in the other intent matches each other
-    	for (int i =0; i < keys.size();i++) {
-    		val.add(MACIPMap.get(keys.get(i)));
-    	}
-    	bundle.putStringArrayList("values", val);
+    	bundle.putStringArrayList("keys", mList);
+
     	//Send the information to the other screen
     	Intent i = new Intent(this, FileListActivity.class);
     	i.putExtras(bundle);
