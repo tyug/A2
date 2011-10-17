@@ -41,7 +41,6 @@ public class SocketServer extends SocketBase {
 		BufferedReader in = null;
 		BufferedWriter out = null;
 		PrintWriter pw = null;
-
 		try {
 			// Create a new server socket
 			server = new ServerSocket();
@@ -129,8 +128,10 @@ public class SocketServer extends SocketBase {
 					}
 				});
 			}
+			if(!shouldQuit) {
+				handleError(e.getMessage());
+			}
 		}
-		
 		// This is always run
 		finally {
 			try {
@@ -144,6 +145,7 @@ public class SocketServer extends SocketBase {
 				e.printStackTrace();
 			}
 		}
+		
 		return null;
 	}
 	
