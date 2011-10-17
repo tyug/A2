@@ -115,7 +115,6 @@ public class SocketServer extends SocketBase {
 			}
 		}
 		catch (IOException e) {
-			handleError(e.getMessage());
 			final Button et = (Button) arg0[0];
 			//only if it's not null it'll change text
 			if (et != null) {
@@ -123,7 +122,6 @@ public class SocketServer extends SocketBase {
 					
 					@Override
 					public void run() {
-						killThread();
 						et.setText("Start Server");
 					}
 				});
