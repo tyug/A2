@@ -29,7 +29,7 @@ public class FileListActivity extends ListActivity {
 	private SocketClient clientSocket = null;
 	private Map<String,String> MACIPMap = null;
 	private FileListActivity This = this;
-	
+	private Boolean showingFileList = false;
 	private EditText statusText = null;
 	
 	private Handler handle = new Handler();
@@ -94,61 +94,70 @@ public class FileListActivity extends ListActivity {
 				});
 			}
 		}).start();
-		
+		showingFileList=false;
 	}
+	
+	@Override
+    protected void onDestroy() {
+        super.onDestroy();
+        clientSocket.killThread();
+    }
 
 	@Override
 	protected void onListItemClick(final ListView l, final View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		// Get the item that was clicked
-		Object o = this.getListAdapter().getItem(position);
 		
-		//Getting the client socket
-		if(clientSocket == null || clientSocket.hasQuit()) {
-    		clientSocket = new SocketClient(this);
-    		clientSocket.execute(MACIPMap.get(o.toString()));
-    	}
-    	
-		statusText.setText("Getting File List");				
-		
-		//This clears the list
-		this.setListAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,new ArrayList<String>()));
-		
-		//Getting the file list in a different thread, to not hang UI thread
-    	new Thread(new Runnable() {
+		if (!showingFileList) {
+			// Get the item that was clicked
+			Object o = this.getListAdapter().getItem(position);
 			
-			@Override
-			public void run() {
-				String filelist;
-				try {
-					//This waits until the async task is done
-					filelist = (String) clientSocket.get();
-					
-					//splitting the returned string
-					final List<String> files = Arrays.asList(filelist.split("\\n"));
-					
-					handle.post(new Runnable() {
-						@Override
-						public void run() {
-							//Update the UI with appropriate information
-							if (files.isEmpty())
-							{
-								statusText.setText("There are no Files");
-							} else {								
-								statusText.setText("Fetch Complete!");
-							}	
-							
-							This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,files));
-						}
-					});
-				} catch (InterruptedException e) {
-					handleError(e.getMessage());
-				} catch (ExecutionException e) {
-					handleError(e.getMessage());
-				}				
-			}
-		}).start();
+			//Getting the client socket
+			if(clientSocket == null || clientSocket.hasQuit()) {
+	    		clientSocket = new SocketClient(this);
+	    		clientSocket.execute(MACIPMap.get(o.toString()));
+	    	}
+	    	
+			statusText.setText("Getting File List");				
+			
+			//This clears the list
+			this.setListAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,new ArrayList<String>()));
+			
+			//Getting the file list in a different thread, to not hang UI thread
+	    	new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					String filelist;
+					try {
+						//This waits until the async task is done
+						filelist = (String) clientSocket.get();
+						
+						//splitting the returned string
+						final List<String> files = Arrays.asList(filelist.split("\\n"));
+						
+						handle.post(new Runnable() {
+							@Override
+							public void run() {
+								//Update the UI with appropriate information
+								if (files.isEmpty())
+								{
+									statusText.setText("There are no Files");
+								} else {
+									statusText.setText("Fetch Complete!");
+								}
+								This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,files));
+								showingFileList = true;
+							}
+						});
+					} catch (InterruptedException e) {
+						handleError(e.getMessage());
+					} catch (ExecutionException e) {
+						handleError(e.getMessage());
+					}				
+				}
+			}).start();
 		}
+	}
 	
 	// Creates a dialog box stating there was an error, and prints the text which the calling code provides it
     protected void handleError(final String error) {
@@ -171,5 +180,5 @@ public class FileListActivity extends ListActivity {
 				alert.show();
 			}
 		});
-	}
+    }
 }

@@ -13,6 +13,7 @@ import java.net.Socket;
 
 import android.content.Context;
 import android.os.Environment;
+import android.widget.Button;
 
 /**
  * A socket used as a server to receive requests from other devices
@@ -114,11 +115,20 @@ public class SocketServer extends SocketBase {
 			}
 		}
 		catch (IOException e) {
+			final Button et = (Button) arg0[0];
+			//only if it's not null it'll change text
+			if (et != null) {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						et.setText("Enable FT");
+					}
+				});
+			}
 			if(!shouldQuit) {
 				handleError(e.getMessage());
 			}
 		}
-		
 		// This is always run
 		finally {
 			try {
