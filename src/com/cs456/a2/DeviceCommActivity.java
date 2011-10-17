@@ -262,7 +262,7 @@ public class DeviceCommActivity extends Activity {
     	bundle.putStringArrayList("keys", mList);
 
     	//Send the information to the other screen
-    	Intent i = new Intent(this, FileListActivity.class);
+    	Intent i = new Intent(this, MACListActivity.class);
     	i.putExtras(bundle);
     	
         startActivity(i);
