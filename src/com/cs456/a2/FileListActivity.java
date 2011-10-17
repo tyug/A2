@@ -100,7 +100,9 @@ public class FileListActivity extends ListActivity {
 	@Override
     protected void onDestroy() {
         super.onDestroy();
-        clientSocket.killThread();
+       if(clientSocket != null) {
+    	   clientSocket.killThread();
+       }
     }
 
 	@Override

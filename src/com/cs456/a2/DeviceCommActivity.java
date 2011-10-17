@@ -129,7 +129,10 @@ public class DeviceCommActivity extends Activity {
 
         // Unregister broadcast listeners
         this.unregisterReceiver(search.getmReceiver());
-        serverSocket.killThread();
+        
+        if(serverSocket != null) {
+        	serverSocket.killThread();
+        }
 		Logger.getInstance().closeLogFile();
     }
     
