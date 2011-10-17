@@ -22,13 +22,15 @@ public abstract class SocketBase extends AsyncTask {
 	
 	protected Context context;
 	
-	protected boolean shouldQuit = false;
+	protected boolean userQuit = false;
+	protected boolean errorQuit = false;
+	protected boolean hasQuit = false;
 	
 	@Override
 	protected abstract Object doInBackground(Object... params); // Must be implemented in derived classes
     
     public void killThread() {
-    	this.shouldQuit = true;
+    	this.userQuit = true;
     	handleKillThread();
     }
     
@@ -57,7 +59,15 @@ public abstract class SocketBase extends AsyncTask {
     
     protected abstract void handleKillThread();
     
-    protected boolean hasQuit() {
-    	return this.shouldQuit;
+    public boolean hasQuit() {
+    	return this.hasQuit;
+    }
+    
+    public boolean errorQuit() {
+    	return this.errorQuit;
+    }
+    
+    public boolean userQuit() {
+    	return this.userQuit;
     }
 }

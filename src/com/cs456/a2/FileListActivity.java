@@ -29,7 +29,7 @@ public class FileListActivity extends ListActivity {
 	private SocketClient clientSocket = null;
 	private Map<String,String> MACIPMap = null;
 	private FileListActivity This = this;
-	private Boolean showingFileList = false;
+	private Boolean listViewClickable = false;
 	private EditText statusText = null;
 	
 	private Handler handle = new Handler();
@@ -85,7 +85,7 @@ public class FileListActivity extends ListActivity {
 						} else if (tmp.isEmpty()) {
 							statusText.setText("No valid MAC address\nGo back and search for new BlueTooth devices!");
 						} else {
-							statusText.setText("Click on 1 of the MAC addresses");
+							statusText.setText("Click on the MAC address you want to retrive a file list from");
 							//Update the UI thread
 							This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,tmp));
 						}
@@ -94,7 +94,7 @@ public class FileListActivity extends ListActivity {
 				});
 			}
 		}).start();
-		showingFileList=false;
+		listViewClickable=true;
 	}
 	
 	@Override
@@ -109,9 +109,9 @@ public class FileListActivity extends ListActivity {
 	protected void onListItemClick(final ListView l, final View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		
-		if (!showingFileList) {
+		if (listViewClickable) {
 			// Get the item that was clicked
-			Object o = this.getListAdapter().getItem(position);
+			final Object o = this.getListAdapter().getItem(position);
 			
 			//Getting the client socket
 			if(clientSocket == null || clientSocket.hasQuit()) {
@@ -120,9 +120,8 @@ public class FileListActivity extends ListActivity {
 	    	}
 	    	
 			statusText.setText("Getting File List");				
-			
-			//This clears the list
-			this.setListAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,new ArrayList<String>()));
+
+			listViewClickable = false;
 			
 			//Getting the file list in a different thread, to not hang UI thread
 	    	new Thread(new Runnable() {
@@ -133,7 +132,15 @@ public class FileListActivity extends ListActivity {
 					try {
 						//This waits until the async task is done
 						filelist = (String) clientSocket.get();
+						if(clientSocket.errorQuit() || clientSocket.userQuit()) {
+							listViewClickable = true;
+							return;
+						}
 						
+						String loggerUse = filelist.replaceAll("\n",", ");
+						loggerUse = loggerUse.substring(0, loggerUse.length() - 2);
+						Logger.getInstance().log(" FILE LIST: "+ MACIPMap.get(o.toString()) + ", " + loggerUse);
+																		
 						//splitting the returned string
 						final List<String> files = Arrays.asList(filelist.split("\\n"));
 						
@@ -143,17 +150,24 @@ public class FileListActivity extends ListActivity {
 								//Update the UI with appropriate information
 								if (files.isEmpty())
 								{
-									statusText.setText("There are no Files");
+									statusText.setText("There were no files found");
 								} else {
-									statusText.setText("Fetch Complete!");
+									if(files.size() == 1) {
+										statusText.setText("There was " + files.size() + " file found");
+									}
+									else {
+										statusText.setText("There were " + files.size() + " files found");
+									}
+									
 								}
 								This.setListAdapter(new ArrayAdapter<String>(This, android.R.layout.simple_list_item_1,files));
-								showingFileList = true;
 							}
 						});
 					} catch (InterruptedException e) {
+						listViewClickable = true;
 						handleError(e.getMessage());
 					} catch (ExecutionException e) {
+						listViewClickable = true;
 						handleError(e.getMessage());
 					}				
 				}

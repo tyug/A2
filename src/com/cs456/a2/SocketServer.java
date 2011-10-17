@@ -47,6 +47,9 @@ public class SocketServer extends SocketBase {
 			
 			// This address can be reused
 			server.setReuseAddress(true);
+			
+			// The server will never time out
+			server.setSoTimeout(0);
 
 			// Bind the socket to the listening port
 			server.bind(new InetSocketAddress(SOCKET_PORT));
@@ -55,7 +58,7 @@ public class SocketServer extends SocketBase {
 				// Listen and wait for a client socket connection to occur
 				client = server.accept();
 				
-				if(shouldQuit) break;
+				if(userQuit) break;
 
 				// Create the input and output stream reader and writer
 				in = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -111,7 +114,7 @@ public class SocketServer extends SocketBase {
 					}
 				}
 				
-				if(shouldQuit) break;				
+				if(userQuit) break;				
 			}
 		}
 		catch (IOException e) {
@@ -125,13 +128,16 @@ public class SocketServer extends SocketBase {
 					}
 				});
 			}
-			if(!shouldQuit) {
+			if(!userQuit) {
+				errorQuit = true;
 				handleError(e.getMessage());
 			}
 		}
 		// This is always run
 		finally {
 			try {
+				hasQuit = true;
+				
 				// Close everything that was opened
 				if (in != null)	in.close();
 				if (out != null) out.close();
