@@ -245,7 +245,7 @@ public class DeviceCommActivity extends Activity {
     		startStopTranferButton.setText("Stop Transfer");
     		statusText.setText("Started the file transfer listener");
     		
-    		serverSocket = new SocketServer(statusText);
+    		serverSocket = new SocketServer(this);
     		serverSocket.execute();
     	}
     	else {

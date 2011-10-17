@@ -5,6 +5,10 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Handler;
 
@@ -22,34 +26,39 @@ public abstract class SocketBase extends AsyncTask {
 	
 	protected Handler handler = new Handler(); // A common handler used to post handle new runnables
 	
+	protected Context context;
+	
 	protected boolean shouldQuit = false;
 	
 	@Override
 	protected abstract Object doInBackground(Object... params); // Must be implemented in derived classes
-	
-	/***
-     * Testing code
-     */
-    protected String getLocalIpAddress() {
-        try {
-            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
-                NetworkInterface intf = en.nextElement();
-                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
-                    InetAddress inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress()) {
-                        return inetAddress.getHostAddress().toString();
-                    }
-                }
-            }
-        } catch (SocketException ex) {
-            //Log.e(LOG_TAG, ex.toString());
-        }
-        return null;
-    }
     
     public void killThread() {
     	this.shouldQuit = true;
     }
+    
+    // Creates a dialog box stating there was an error, and prints the text which the calling code provides it
+    protected void handleError(final String error) {
+    	handler.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+				alertBuilder.setMessage(error);
+				alertBuilder.setCancelable(false);
+				
+				alertBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+				
+				AlertDialog alert = alertBuilder.create();
+				alert.setTitle("Error!");
+				alert.show();
+			}
+		});
+	}
     
     protected abstract void handleKillThread();
     

@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import android.content.Context;
 import android.widget.EditText;
 
 /**
@@ -20,8 +21,9 @@ public class SocketClient extends SocketBase {
 	private EditText statusText;
 	private Socket socket = null;
 
-	public SocketClient(EditText clientView) {
+	public SocketClient(EditText clientView, Context context) {
 		this.statusText = clientView;
+		this.context = context;
 	}
 	
 	@Override

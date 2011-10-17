@@ -11,8 +11,8 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import android.content.Context;
 import android.os.Environment;
-import android.widget.EditText;
 
 /**
  * A socket used as a server to receive requests from other devices
@@ -23,13 +23,12 @@ import android.widget.EditText;
 public class SocketServer extends SocketBase {
 
 	private File sdCardRoot = Environment.getExternalStorageDirectory(); // The SD Card root path
-	private EditText statusText;
 	
 	private ServerSocket server = null;
 	private Socket client = null;
 	
-	public SocketServer(EditText serverView) {
-		this.statusText = serverView;
+	public SocketServer(Context context) {
+		this.context = context;
 	}
 
 	@Override
@@ -41,17 +40,9 @@ public class SocketServer extends SocketBase {
 		try {
 			// Create a new server socket
 			server = new ServerSocket();
-
+			
 			// This address can be reused
 			server.setReuseAddress(true);
-
-			handler.post(new Runnable() {
-
-				@Override
-				public void run() {
-					statusText.setText("Listening: " + getLocalIpAddress());
-				}
-			});
 
 			// Bind the socket to the listening port
 			server.bind(new InetSocketAddress(SOCKET_PORT));
@@ -61,14 +52,6 @@ public class SocketServer extends SocketBase {
 				client = server.accept();
 				
 				if(shouldQuit) break;
-
-				handler.post(new Runnable() {
-
-					@Override
-					public void run() {
-						statusText.setText("Server is done");
-					}
-				});
 
 				// Create the input and output stream reader and writer
 				in = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -81,21 +64,7 @@ public class SocketServer extends SocketBase {
 
 				// Wait for a connection message to be sent. Once received send one back
 				while (true) {
-					handler.post(new Runnable() {
-
-						@Override
-						public void run() {
-							statusText.setText("Pre Read Line");
-						}
-					});
 					line = in.readLine();
-					handler.post(new Runnable() {
-
-						@Override
-						public void run() {
-							statusText.setText("Read Line");
-						}
-					});
 
 					// If the socket is closed, break
 					if (line == null) {
@@ -140,9 +109,11 @@ public class SocketServer extends SocketBase {
 				
 				if(shouldQuit) break;				
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
+		catch (IOException e) {
+			handleError(e.getMessage());
+		}
+		
 		// This is always run
 		finally {
 			try {
